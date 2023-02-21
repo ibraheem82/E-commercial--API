@@ -15,9 +15,7 @@ app.use(morgan('tiny'))
 
 
 
-// * Model -> Schema
-// matching the schema to it model
-const Product = mongoose.model('Product', productSchema);
+
 
 
 // http://localhost:3000/api/v1/products
