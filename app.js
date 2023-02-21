@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const { json } = require('express');
 
 dotenv.config({ path: './config.env' });
 
@@ -11,6 +12,17 @@ const api = process.env.API_URL;
 // * Middlewares
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
+
+const productSchema = mongoose.Schema({
+  name: String,
+  image: String,
+  countInstock:Number
+})
+
+// * Model -> Schema
+// matching the schema to it model
+const Product = mongoose.model('Product', productSchema);
+
 
 // http://localhost:3000/api/v1/products
 app.get(`${api}/products`, (req, res) => {
@@ -24,9 +36,24 @@ app.get(`${api}/products`, (req, res) => {
 
 
 app.post(`${api}/products`, (req, res) => {
-  const newProduct = req.body;
-  console.log(newProduct);
-  res.send(newProduct);
+  // receive product from the frontend
+  const product = new Product({
+    name: req.body.name,
+    image: req.body.image,
+    countInstock: req.body.countInstock
+  })
+
+  // * save in the database
+  product.save().then((createdProduct => {
+    res.status(201).json(createdProduct)
+
+  })).catch((err) => {
+    res.status(500).json({
+      error: err,
+      success: false
+    })
+  })
+  // console.log(newProduct);
 })
 
 
