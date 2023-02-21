@@ -13,11 +13,7 @@ const api = process.env.API_URL;
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 
-const productSchema = mongoose.Schema({
-  name: String,
-  image: String,
-  countInstock:Number
-})
+
 
 // * Model -> Schema
 // matching the schema to it model
@@ -25,13 +21,13 @@ const Product = mongoose.model('Product', productSchema);
 
 
 // http://localhost:3000/api/v1/products
-app.get(`${api}/products`, (req, res) => {
-  const product = {
-    id: 90,
-    name: 'Toyota',
-    images: 'homees'
+app.get(`${api}/products`, async(req, res) => {
+  const productList = await Product.find();
+
+  if (!productList) {
+    res.status(500).json({success:false})
   }
-  res.send(product);
+  res.send(productList);
 })
 
 
@@ -40,7 +36,10 @@ app.post(`${api}/products`, (req, res) => {
   const product = new Product({
     name: req.body.name,
     image: req.body.image,
-    countInstock: req.body.countInstock
+    countInstock: {
+      type: Number,
+      required:true
+    }
   })
 
   // * save in the database
