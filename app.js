@@ -4,57 +4,33 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const { json } = require('express');
 
 dotenv.config({ path: './config.env' });
-
 const api = process.env.API_URL;
+
+
+
+
 // * Middlewares
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 
+// * Routers
+const categoriesRoutes = require('./routers/categories.router');
+const productsRoutes = require('./routers/products.router');
+const usersRoutes = require('./routers/users.router');
+const ordersRoutes = require('./routers/orders.router');
 
 
 
-
-
-// http://localhost:3000/api/v1/products
-app.get(`${api}/products`, async(req, res) => {
-  const productList = await Product.find();
-
-  if (!productList) {
-    res.status(500).json({success:false})
-  }
-  res.send(productList);
-})
-
-
-app.post(`${api}/products`, (req, res) => {
-  // receive product from the frontend
-  const product = new Product({
-    name: req.body.name,
-    image: req.body.image,
-    countInstock: {
-      type: Number,
-      required:true
-    }
-  })
-
-  // * save in the database
-  product.save().then((createdProduct => {
-    res.status(201).json(createdProduct)
-
-  })).catch((err) => {
-    res.status(500).json({
-      error: err,
-      success: false
-    })
-  })
-  // console.log(newProduct);
-})
+app.use(`${api}/categories`, categoriesRoutes);
+app.use(`${api}/products`, productsRoutes);
+app.use(`${api}/users`, usersRoutes);
+app.use(`${api}/orders`, ordersRoutes);
 
 
 
+// * Database
 mongoose.set("strictQuery", false);
 mongoose.connect(process.env.DATABASE_LOCAL, {
   useNewUrlParser: true,
@@ -62,6 +38,7 @@ mongoose.connect(process.env.DATABASE_LOCAL, {
 }
 ).then(() => console.log('DB connection was successfull'));
 
+// * Server
 app.listen(3000, () => {
   console.log('listening on port http://localhost:3000');
 })
