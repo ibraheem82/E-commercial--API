@@ -29,7 +29,6 @@ app.use(`${api}/users`, usersRoutes);
 app.use(`${api}/orders`, ordersRoutes);
 
 
-
 // * Database
 mongoose.set("strictQuery", false);
 mongoose.connect(process.env.DATABASE_LOCAL, {
