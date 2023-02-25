@@ -4,8 +4,12 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config({ path: './config.env' });
+
+app.use(cors())
+app.options('*', cors());
 const api = process.env.API_URL;
 
 
