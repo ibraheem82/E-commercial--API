@@ -26,7 +26,7 @@ const usersRoutes = require('./routers/users.router');
 const ordersRoutes = require('./routers/orders.router');
 
 
-
+// it will use all the function the is coming from the routers and match it to the specific url needed.
 app.use(`${api}/categories`, categoriesRoutes);
 app.use(`${api}/products`, productsRoutes);
 app.use(`${api}/users`, usersRoutes);
