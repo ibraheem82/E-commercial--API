@@ -19,7 +19,14 @@ router.get(`/`, async(req, res) => {
   res.send(productList);
 })
 
-router.get(`/:id`, async(req, res) => {
+router.get(`/:id`, async (req, res) => {
+//    .populate('category') is a method that is called on the result of Product.findById(req.params.id).
+
+// .populate() is a Mongoose method used for populating reference fields in a document. In the context of the code you provided, it is used to populate the category field of the product document.
+
+// The category field in the product document is likely a reference to another document (i.e. a category document), and the populate method is used to retrieve the referenced category document and replace the category field in the product document with the category document.
+
+// The result of calling .populate() on the product document is that the category field in the product document will now contain the actual category document, rather than just its ID. This can be useful when working with related data in Mongoose and can simplify querying and manipulation of related data.
   // [.populate()] -> Means any connected ID or field to another table of collection will be displayed as detail in this field, Specifies paths which should be populated with other documents.
   const product = await Product.findById(req.params.id).populate('category')
   if (!product) {
@@ -114,6 +121,32 @@ router.delete('/:id', (req, res) => {
             error: err
         })
     })
+})
+
+router.get(`/get/count`, async(req, res) => {
+  // It will return the product count.
+  // const productCount = await Product.countDocuments((count) => count)
+  const productCount = await Product.countDocuments({});
+  if (!productCount) {
+    res.status(500).json({success:false})
+  }
+  res.send({
+    productCount:productCount
+  });
+})
+
+
+
+router.get(`/get/featured/:count`, async(req, res) => {
+  // will get by the number that we pass inside the parameter.
+  const count = req.params.count ? req.params.count : 0;
+  const featuredProducts = await Product.find({
+    isFeatured: true
+  }).limit(+count)
+  if (!featuredProducts) {
+    res.status(500).json({success:false})
+  }
+  res.send(featuredProducts)
 })
 
 
