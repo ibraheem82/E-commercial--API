@@ -3,6 +3,8 @@ const express = require('express');
 const { Category } = require('../models/category.model');
 // * router
 const router = express.Router();
+const mongoose = require('mongoose');
+
 
 // http://localhost:3000/api/v1/products
 router.get(`/`, async(req, res) => {
@@ -58,6 +60,10 @@ router.post(`/`, async (req, res) => {
 
 // * Update Product
 router.put('/:id', async (req, res) => {
+  // ! if it is not valid it will return error
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    res.status(400).send('Invalid Product Id')
+  }
    const category = await Category.findById(req.body.category)
 
   if (!category) return res.status(400).send('Invalid Category');
