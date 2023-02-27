@@ -87,4 +87,28 @@ router.put('/:id', async (req, res) => {
 })
 
 
+router.delete('/:id', (req, res) => {
+    // * will find and delete by ID
+    const findID = breq.params.id
+    Product.findByIdAndRemove(findID).then(product => {
+        if (product) {
+            return res.status(200).json({
+                success: true,
+                message: `The product with the ID ~ ${findID} ~ was deleted.`
+            })
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: `Product with the ID ~ ${findID} ~ not found.`
+            });
+        }
+    }).catch(err => {
+        return res.status(400).json({
+            success: false,
+            error: err
+        })
+    })
+})
+
+
 module.exports = router
