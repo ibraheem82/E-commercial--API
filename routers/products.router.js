@@ -11,7 +11,25 @@ router.get(`/`, async(req, res) => {
   // [.select('name image')] -> use for selecting exactly what you want.
   // [-_id] -> To exclude something from the database.
   // const productList = await Product.find().select('name image -_id');
-  const productList = await Product.find().populate('category');
+
+  // ! Forcing the api to have categories, it must have categories.
+  // if it is empty it will get all the fields
+  let filter = {}
+//   This code block checks if the request has a categories query parameter. If it does, the code splits the value of the categories parameter by commas (,) into an array and sets it as the value of the category property in the filter object.
+
+// For example, if the URL for the request is http://example.com/products?categories=shoes,clothing, then req.query.categories will be the string 'shoes,clothing', and filter will be set to { category: ['shoes', 'clothing'] }.
+
+// If the categories query parameter is not present in the request, the filter object remains an empty object.
+  if (req.query.categories) {
+    filter = { category: req.query.categories.split(',') }
+  }
+  // const productList = await Product.find().populate('category');
+//   This line uses the Mongoose library to query the database for products that match the filter criteria defined in the filter object. The Product model is assumed to be defined elsewhere in the code.
+
+// The populate method is used to populate the category field of each product with the full category object instead of just its ID. This assumes that there is a Category model in the database and that the Product model has a reference to it through a category field.
+
+// Overall, this code allows clients to filter the list of products returned by the server based on the category or categories they specify in the query parameter. If no category is specified, the server returns all products.
+  const productList = await Product.find(filter).populate('category');
 
   if (!productList) {
     res.status(500).json({success:false})
@@ -102,7 +120,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', (req, res) => {
     // * will find and delete by ID
-    const findID = breq.params.id
+    const findID = req.params.id
     Product.findByIdAndRemove(findID).then(product => {
         if (product) {
             return res.status(200).json({
