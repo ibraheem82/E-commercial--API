@@ -77,6 +77,15 @@ const productSchema = mongoose.Schema({
 })
 
 
+// * To change "_id" key to "id" in a more user friendly way.
+productSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+productSchema.set('toJSON', {
+  virtuals: true,
+});
+
 // * Model -> Schema
 // matching the schema to it model
 exports.Product = mongoose.model('Product', productSchema);
