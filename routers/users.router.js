@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
     user = await user.save();
 
     if (!user)
-        return res.status(404).send('The user cannot be created!')
+        return res.status(404).send('The user cannot be created!❌')
 // * 
     res.send(user)
 })
@@ -59,10 +59,14 @@ router.post('/login', async (req, res) => {
     })
 
     if (!user) {
-        return res.status(400).send('The user not found');
+        return res.status(400).send('The user not found❌');
     }
-    
-    return res.status(200).send(user);
+// it will compare the password that the user is useing to sign in by the user.passwordHash in the database.
+    if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
+        res.status(200).send('User Authenticated✅');
+    } else {
+        res.status(400).send('Wrong password❌');
+    }
 })
 
 
