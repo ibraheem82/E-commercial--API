@@ -8,6 +8,9 @@ router.get(`/`, async (req, res) =>{
     // ! Excluding the -> [passwordHash] field.
     const userList = await User.find().select('-passwordHash');
 
+    // Selecting a specific fields you want to use.
+    // const userList = await User.find().select('name email phone');
+
     if(!userList) {
         res.status(500).json({success: false})
     }
@@ -46,5 +49,21 @@ router.post('/', async (req, res) => {
 // * 
     res.send(user)
 })
+
+
+
+router.post('/login', async (req, res) => {
+    // login with the credentials that will be provided.
+    const user = await User.findOne({
+        email: req.body.email
+    })
+
+    if (!user) {
+        return res.status(400).send('The user not found');
+    }
+    
+    return res.status(200).send(user);
+})
+
 
 module.exports =router;
