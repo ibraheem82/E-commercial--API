@@ -2,6 +2,7 @@ const {User} = require('../models/user.model');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 router.get(`/`, async (req, res) =>{
     // const userList = await User.find();
@@ -57,13 +58,27 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({
         email: req.body.email
     })
+    const secret = process.env.secret
 
     if (!user) {
         return res.status(400).send('The user not found❌');
     }
 // it will compare the password that the user is useing to sign in by the user.passwordHash in the database.
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-        res.status(200).send('User Authenticated✅');
+
+        const token = jwt.sign(
+            {
+                userId: user.id
+            },
+            secret,
+            {
+                expiresIn: '200d'
+            }
+        )
+        // res.status(200).send('User Authenticated✅');
+        // the token get the user will be use to login
+        // the token was created by the "secret"
+        res.status(200).send({user: user.email, token: token});
     } else {
         res.status(400).send('Wrong password❌');
     }
