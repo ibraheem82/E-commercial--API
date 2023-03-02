@@ -1,6 +1,7 @@
 const {User} = require('../models/user.model');
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
 router.get(`/`, async (req, res) =>{
     const userList = await User.find();
