@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const authJwt = require('./helper/jwt');
+
 const cors = require('cors');
 
 dotenv.config({ path: './config.env' });
