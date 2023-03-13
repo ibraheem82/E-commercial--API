@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        default: false,
+        default: false
     },
     street: {
         type: String,
@@ -41,8 +41,7 @@ const userSchema = new mongoose.Schema({
         default: ''
     }
 
-});
-
+}, { strict: false });
 userSchema.virtual('id').get(function () {
     return this._id.toHexString();
 });
