@@ -21,6 +21,7 @@ const api = process.env.API_URL;
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 app.use(authJwt())
+app.use(errorHandler)
 
 // * Routers
 const categoriesRoutes = require('./routers/categories.router');
