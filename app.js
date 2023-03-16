@@ -38,7 +38,7 @@ app.use(`${api}/orders`, ordersRoutes);
 
 
 // * Database
-mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", true);
 mongoose.connect(process.env.DATABASE_LOCAL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
