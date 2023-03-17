@@ -58,7 +58,7 @@ router.get(`/:id`, async (req, res) =>{
         // 'populate' property set to 'category'.
         .populate({ 
             path: 'orderItems', populate: {
-                path : 'product', populate: 'category'} 
+            path : 'product', populate: 'category'} 
         });
 
     // If no order was found, send a 500 error response with a JSON object
