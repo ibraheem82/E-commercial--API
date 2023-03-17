@@ -39,37 +39,21 @@ router.get(`/`, async (req, res) => {
 
 // This is a GET request for a specific order identified by its ID, 
 // which is passed as a URL parameter (e.g. /orders/123)
-router.get(`/:id`, async (req, res) =>{
+// This route handles updating an order with a specific ID
+router.put('/:id', async (req, res) => {
+  // Find the order with the given ID and update its status field with the status provided in the request body.
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { status: req.body.status },
+    { new: true }
+  );
 
-    // This line uses Mongoose's findById method to find the order with the ID
-    // specified in the URL parameter. It returns a Promise that resolves to 
-    // the order document from the database.
-    const order = await Order.findById(req.params.id)
-    
-        // This line uses Mongoose's populate method to include the 'user' field
-        // in the order document, and only include the 'name' property of the user document.
-        .populate('user', 'name')
+  // If no order was found with the given ID, return a 400 error.
+  if (!order) return res.status(400).send('the order cannot be updated!');
 
-        // This line uses Mongoose's populate method to include the 'orderItems' field
-        // in the order document, and also include the 'product' field for each item
-        // and the 'category' field for each product. This is done by passing an object
-        // with the 'path' property set to 'orderItems' and the 'populate' property
-        // set to another object with the 'path' property set to 'product' and the 
-        // 'populate' property set to 'category'.
-        .populate({ 
-            path: 'orderItems', populate: {
-            path : 'product', populate: 'category'} 
-        });
-
-    // If no order was found, send a 500 error response with a JSON object
-    // that has a 'success' property set to false.
-    if(!order) {
-        res.status(500).json({success: false})
-    } 
-
-    // Otherwise, send the order document as a JSON response.
-    res.send(order);
-})
+  // If the update was successful, send back the updated order as the response.
+  res.send(order);
+});
 
 
 
