@@ -67,6 +67,9 @@ router.get(`/:id`, async (req, res) =>{
         res.status(500).json({success: false})
     } 
 
+    // Otherwise, send the order document as a JSON response.
+    res.send(order);
+})
 
 
 
