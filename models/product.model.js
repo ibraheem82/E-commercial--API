@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 
 
 const productSchema = mongoose.Schema({
+  // _id: {
+  //   type: String,
+  //   required: true,
+  //   unique: true
+  // },
+
   name: {
     type: String,
     required:true,
@@ -76,6 +82,15 @@ const productSchema = mongoose.Schema({
   }
 })
 
+// // * making sure that all products must have their own ID's
+// productSchema.pre('save', function(next) {
+//   if (!this._id) {
+//     // Generate a unique ID based on the product name and category name
+//     const id = `${this.name}-${this.category.name}`.toLowerCase();
+//     this._id = id;
+//   }
+//   next();
+// });
 
 // * To change "_id" key to "id" in a more user friendly way.
 productSchema.virtual('id').get(function () {
