@@ -10,7 +10,13 @@ const userSchema = new mongoose.Schema({
   unique: true, // Ensure that the email is unique
   validate: {
     validator: async function (email) {
-      try {
+          try {
+          /*
+          *The this.constructor refers to the constructor function of the current model instance. In other words, it is a reference to the User model that was used to create the current user object.
+          
+
+          * So, const existingUser = await this.constructor.findOne({ email }); retrieves the user document from the database where the email field matches the email argument passed to the validator function, and assigns it to existingUser variable.
+          */
         const existingUser = await this.constructor.findOne({ email }); // Check if a user with the same email already exists
         return !existingUser; // Return true if no user with the same email exists, false otherwise
       } catch (err) {
