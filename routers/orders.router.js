@@ -56,6 +56,28 @@ router.put('/:id', async (req, res) => {
 });
 
 
+// This route handles deleting an order with a specific ID
+router.delete('/:id', (req, res) => {
+  // Find the order with the given ID and remove it from the database
+  Order.findByIdAndRemove(req.params.id).then(async order => {
+    // If the order was found, remove all associated orderItems from the database
+    if (order) {
+      await order.orderItems.map(async orderItem => {
+        await OrderItem.findByIdAndRemove(orderItem);
+      });
+      // Send a success response with a message indicating that the order was deleted
+      return res.status(200).json({ success: true, message: 'the order is deleted!' });
+    } else {
+      // If no order was found with the given ID, send a 404 error response
+      return res.status(404).json({ success: false , message: 'order not found!' });
+    }
+  }).catch(err => {
+    // If there was an error during the database operation, send a 500 error response with details about the error
+    return res.status(500).json({ success: false, error: err });
+  });
+});
+
+
 
 
 
