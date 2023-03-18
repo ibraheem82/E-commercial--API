@@ -4,6 +4,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+
+// TODO: Provide your token before accessing this route.
 router.get(`/`, async (req, res) =>{
     // const userList = await User.find();
     // ! Excluding the -> [passwordHash] field.
@@ -29,7 +31,17 @@ router.get('/:id', async (req, res) => {
 
 })
 
+// * Register User
 router.post('/', async (req, res) => { 
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) {
+            return res.status(400).send('Email already exists');
+        }
+
+        const phoneExists = await User.findOne({ phone: req.body.phone });
+        if (phoneExists) {
+            return res.status(400).send('Phone number already exists');
+        }
     let user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -52,7 +64,8 @@ router.post('/', async (req, res) => {
 })
 
 
-
+// * Login User
+// * when you logIn you will be given a access {Token}.
 router.post('/login', async (req, res) => {
     // login with the credentials that will be provided.
     const user = await User.findOne({
@@ -85,7 +98,7 @@ router.post('/login', async (req, res) => {
     }
 })
 
-
+// * Delete User
 router.delete('/:id', (req, res) => {
     // * will find and delete by ID
     const findID = req.params.id
