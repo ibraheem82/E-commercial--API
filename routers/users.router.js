@@ -35,12 +35,12 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => { 
         const emailExists = await User.findOne({ email: req.body.email });
         if (emailExists) {
-            return res.status(400).send('Email already exists');
+            return res.status(400).send('User with this e-mail already exists');
         }
 
         const phoneExists = await User.findOne({ phone: req.body.phone });
         if (phoneExists) {
-            return res.status(400).send('Phone number already exists');
+            return res.status(400).send('User with this phone number already exists');
         }
     let user = new User({
         name: req.body.name,
