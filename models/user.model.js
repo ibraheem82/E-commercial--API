@@ -4,17 +4,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-        email: {
-    type: String,
-    required: true,
-    unique: true, // Ensure that the email is unique
-    validate: {
-        validator: async function (email) {
+   email: {
+  type: String,
+  required: true,
+  unique: true, // Ensure that the email is unique
+  validate: {
+    validator: async function (email) {
+      try {
         const existingUser = await this.constructor.findOne({ email }); // Check if a user with the same email already exists
         return !existingUser; // Return true if no user with the same email exists, false otherwise
-        },
-        message: 'Email already exists' // Error message to be thrown if the email already exists
-    }
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    },
+    message: 'Email already exists', // Error message to be thrown if the email already exists
+  },
 },
     passwordHash: {
         type: String,
