@@ -184,4 +184,21 @@ router.post('/', async (req,res)=>{
     // Return the newly created order
     res.send(order);
 })
+// This line defines a GET route in the router object with the URL path '/get/totalsales'. When this route is accessed, the callback function passed as the second argument will be executed. The callback function is declared as an async function.
+router.get('/get/totalsales', async (req, res) => {
+  // This line creates a variable called totalSales that is assigned the result of an aggregation operation on the Order collection. The aggregation operation uses the $group operator to group all documents in the collection by a null _id field, and calculates the sum of the totalPrice field for each group using the $sum operator. The result of the aggregation is an array of objects, each containing the _id and totalsales fields.
+// The use of await indicates that this is an asynchronous operation and the code will wait for the operation to complete before moving on to the next line.
+    const totalSales= await Order.aggregate([
+        { $group: { _id: null , totalsales : { $sum : '$totalPrice'}}}
+    ])
+// This line checks if totalSales is falsy. If it is, then it means the aggregation operation did not return any results, and an error message is sent to the client with a status code of 400 using the res.status() and res.send() methods.
+// The use of the return keyword ensures that the function stops executing at this point and does not proceed to the next line.
+    if(!totalSales) {
+        return res.status(400).send('The order sales cannot be generated')
+    }
+// This line sends a JSON response to the client containing the total sales value as a property of an object with the key totalsales. The value of the totalsales property is obtained by calling the pop() method on the totalSales array to get the last object in the array, and then accessing its totalsales property.
+// The res.send() method sends the response to the client.
+    res.send({totalsales: totalSales.pop().totalsales})
+})
+
 module.exports =router;
