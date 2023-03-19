@@ -22,10 +22,30 @@ const router = express.Router();
 */
 // This defines a new route for handling GET requests to the root of the router. When a GET request is made to this route, the function defined in the next lines will be executed.
 router.get(`/`, async (req, res) => {
-    // This line of code queries the database using the Order model to retrieve all orders, with the user field populated with only the name property. The results are sorted by dateOrdered in descending order. The await keyword is used to indicate that this is an asynchronous operation and the code will wait for the result before continuing.
+    // * This line of code queries the database using the Order model to retrieve all orders, with the user field populated with only the name property. The results are sorted by dateOrdered in descending order. The await keyword is used to indicate that this is an asynchronous operation and the code will wait for the result before continuing.
     // order from the newest to the oldest
-    const orderList = await Order.find().populate('user', 'name').sort({'dateOrdered': -1});
+  // * The lean() method is used to retrieve plain JavaScript objects instead of Mongoose documents, which can be more efficient if you don't need to modify or save the documents back to the database.
+  const orderList = await Order.find().populate('user', 'name').sort({'dateOrdered': -1}).lean();
 
+orderList.forEach(order => {
+  const date = new Date(order.dateOrdered);
+  const year = date.getFullYear();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const day = date.getDate().toString();
+  const suffix = getDaySuffix(day);
+  order.dateOrdered = `${year} ${month} ${day}${suffix}`;
+});
+
+function getDaySuffix(day) {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1:  return "st";
+    case 2:  return "nd";
+    case 3:  return "rd";
+    default: return "th";
+  }
+}
+  
 
     // This block of code checks whether orderList is falsy, which would indicate that there was an error retrieving the orders from the database. If this is the case, it sends an error response with status code 500 and a JSON object with a success property set to false.
     if(!orderList) {
@@ -33,6 +53,21 @@ router.get(`/`, async (req, res) => {
     } 
     // This sends a successful response with the orderList object retrieved from the database as the response body.
     res.send(orderList);
+})
+
+
+router.get(`/:id`, async (req, res) =>{
+    const order = await Order.findById(req.params.id)
+    .populate('user', 'name')
+    .populate({ 
+        path: 'orderItems', populate: {
+        path : 'product', populate: 'category'} 
+        });
+
+    if(!order) {
+        res.status(500).json({success: false})
+    } 
+    res.send(order);
 })
 
 
