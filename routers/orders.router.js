@@ -146,11 +146,13 @@ router.post('/', async (req,res)=>{
     const orderItemsIdsResolved =  await orderItemsIds;
 
     // Calculate the total price of all order items
+  // getting the [orderItemId] from the database.
     const totalPrices = await Promise.all(orderItemsIdsResolved.map(async (orderItemId)=> {
         // Find the order item by its ID and populate its associated product's price
         const orderItem = await OrderItem.findById(orderItemId).populate('product', 'price');
         // Calculate the total price of the order item
-        const totalPrice = orderItem.product.price * orderItem.quantity;
+        const totalPrice = orderItem.product && orderItem.product.price ? orderItem.product.price * orderItem.quantity : 0;
+
         return totalPrice
     }))
 
@@ -158,18 +160,20 @@ router.post('/', async (req,res)=>{
     const totalPrice = totalPrices.reduce((a,b) => a +b , 0);
 
     // Create a new order object from the request body
+    console.log(req.body.user);
     let order = new Order({
-        orderItems: orderItemsIdsResolved,
-        shippingAddress1: req.body.shippingAddress1,
-        shippingAddress2: req.body.shippingAddress2,
-        city: req.body.city,
-        zip: req.body.zip,
-        country: req.body.country,
-        phone: req.body.phone,
-        status: req.body.status,
-        totalPrice: totalPrice,
-        user: req.body.user,
-    })
+      orderItems: orderItemsIdsResolved,
+      shippingAddress1: req.body.shippingAddress1,
+      shippingAddress2: req.body.shippingAddress2,
+      city: req.body.city,
+      zip: req.body.zip,
+      country: req.body.country,
+      phone: req.body.phone,
+      status: req.body.status,
+      totalPrice: totalPrice,
+      user: req.body.user,
+    });
+
     // Save the new order to the database
     order = await order.save();
 
