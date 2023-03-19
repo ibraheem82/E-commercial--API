@@ -88,7 +88,6 @@ router.put('/:id', async (req, res) => {
 
   // If no order was found with the given ID, return a 400 error.
   if (!order) return res.status(400).send('the order cannot be updated!');
-
   // If the update was successful, send back the updated order as the response.
   res.send(order);
 });
@@ -99,6 +98,10 @@ router.delete('/:id', (req, res) => {
   // Find the order with the given ID and remove it from the database
   Order.findByIdAndRemove(req.params.id).then(async order => {
     // If the order was found, remove all associated orderItems from the database
+    // it will delete all the items that are inside a particular Order from the database.
+    /*
+    * this code removes all OrderItem documents associated with a given order document from a database, using asynchronous functions to ensure that each removal is completed before moving on to the next one.
+    */
     if (order) {
       await order.orderItems.map(async orderItem => {
         await OrderItem.findByIdAndRemove(orderItem);
