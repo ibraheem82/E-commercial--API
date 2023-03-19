@@ -58,9 +58,12 @@ function getDaySuffix(day) {
 
 router.get(`/:id`, async (req, res) =>{
     const order = await Order.findById(req.params.id)
-    .populate('user', 'name')
+      .populate('user', 'name')
+      // fetching related data from the database, populating the orderItems from the Order model with the corresponding product and its associated category.
+      // The path option specifies that the field to be populated is orderItems, the second populate specifies that the product field of the {orderItems} model should be populated with the related Product document.
     .populate({ 
-        path: 'orderItems', populate: {
+      path: 'orderItems', populate: {
+          // populate the category that is inside the product
         path : 'product', populate: 'category'} 
         });
 
