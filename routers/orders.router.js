@@ -201,7 +201,7 @@ router.get('/get/totalsales', async (req, res) => {
     res.send({totalsales: totalSales.pop().totalsales})
 })
 
-
+// Get the numbers of products that you have ordered
 router.get(`/get/count`, async (req, res) =>{
   const orderCount = await Order.countDocuments({});
 
@@ -212,5 +212,78 @@ router.get(`/get/count`, async (req, res) =>{
         orderCount: orderCount
     });
 })
+
+
+// * You can use either of the two routes
+// router.get(`/get/userorders/:userid`, async (req, res) =>{
+//     const userOrderList = await Order.find({user: req.params.userid}).populate({ 
+//         path: 'orderItems', populate: {
+//             path : 'product', populate: 'category'} 
+//         }).sort({'dateOrdered': -1});
+
+//     if(!userOrderList) {
+//         res.status(500).json({success: false})
+//     } 
+//     res.send(userOrderList);
+// })
+
+
+
+
+
+
+// *This code defines a route handler function for GET requests to /get/userorders/:userid, which retrieves the order list for a given user and calculates the total number of items in each order. Here's a more detailed breakdown of each line:
+
+// router.get(/get/userorders/:userid, async (req, res) => {: Defines a route handler function for GET requests to /get/userorders/:userid. The :userid part of the URL specifies a parameter that can be accessed through the req.params.userid property.
+
+// try {: Begins a try block to handle any errors that might occur in the code.
+
+// const userOrderList = await Order.find({ user: req.params.userid }).populate({ path: 'orderItems', populate: { path : 'product', populate: 'category' } }).sort({'dateOrdered': -1});: Uses the await keyword to retrieve the order list for the given user ID from the Order model. The populate() method is used to populate the orderItems property with the corresponding product and category documents. The sort() method sorts the orders by dateOrdered in descending order.
+
+// if (!userOrderList) {: Checks if userOrderList is empty or undefined.
+
+// res.status(404).json({ success: false, message: 'No orders found for this user' });: Sends a 404 response with a JSON object containing the success property set to false and an error message if there are no orders for the given user.
+
+// const itemCounts = userOrderList.reduce((acc, order) => {: Uses the reduce() method to iterate over each order in the userOrderList array and calculate the total number of items in each order.
+
+// const orderItemCount = order.orderItems.reduce((acc, item) => {: Uses reduce() again to iterate over each item in the orderItems array of the
+router.get(`/get/userorders/:userid`, async (req, res) => {
+  try {
+    // Find all orders made by the user with the given ID, and populate the order items with the corresponding products and categories
+    const userOrderList = await Order.find({ user: req.params.userid }).populate({ 
+      path: 'orderItems', populate: {
+        path : 'product', populate: 'category'
+      } 
+    }).sort({'dateOrdered': -1});
+
+    // If no orders are found, return a 404 error response
+    if (!userOrderList) {
+      res.status(404).json({ success: false, message: 'No orders found for this user' });
+    } else {
+      // Calculate the total number of items in each order and return an array of objects containing the order ID and item count
+      const itemCounts = userOrderList.reduce((acc, order) => {
+        const orderItemCount = order.orderItems.reduce((acc, item) => {
+          return acc + item.quantity;
+        }, 0);
+        return acc.concat({ order: order._id, itemCount: orderItemCount });
+      }, []);
+
+      // Return a success response with the item counts for each order
+      res.status(200).json({
+        success: true,
+        message: 'User order list retrieved successfully',
+        orders: itemCounts
+      });
+    }
+  } catch (error) {
+    // If an error occurs, log the error and return a 500 error response
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
+
 
 module.exports =router;
