@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
-// TODO: Provide your token before accessing this route.
+// TODO: Provide your token before accessing this route
+// will get all the users from the database.
 router.get(`/`, async (req, res) =>{
     // const userList = await User.find();
     // ! Excluding the -> [passwordHash] field.
@@ -20,7 +21,7 @@ router.get(`/`, async (req, res) =>{
     res.send(userList);
 })
 
-
+// * Get a specific user.
 router.get('/:id', async (req, res) => {
     // const user = await User.findById(req.params.id);
     const user = await User.findById(req.params.id).select('-passwordHash');
@@ -122,7 +123,7 @@ router.delete('/:id', (req, res) => {
     })
 })
 
-
+// will get the number of users
 router.get(`/get/count`, async(req, res) => {
   // It will return the product count.
     const userCount = await User.countDocuments({});
