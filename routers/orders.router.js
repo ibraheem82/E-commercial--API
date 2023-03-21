@@ -56,6 +56,7 @@ function getDaySuffix(day) {
 })
 
 
+// * Get order base on the ID that is been provided in the urls
 router.get(`/:id`, async (req, res) =>{
     const order = await Order.findById(req.params.id)
       .populate('user', 'name')
