@@ -4,6 +4,47 @@ const { Category } = require('../models/category.model');
 // * router
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer')
+
+const multer = require('multer');
+
+const FILE_TYPE_MAP = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg'
+};
+
+/*
+* -> This code block initializes a multer instance and sets its storage and upload options. Multer is a middleware for handling multipart/form-data, which is typically used for uploading files.
+
+* -> The diskStorage function is called to set the destination and filename of the uploaded file. It takes an object with two properties as an argument.
+
+* -> The destination property specifies the directory where the uploaded file will be stored. The cb (callback) function is called once the directory has been set. If an error occurs during file validation, an error is created and passed to the cb function, along with the directory where the file should be stored. Otherwise, null is passed as the error parameter, and the directory is still passed as the second argument.
+
+* -> The filename property specifies the name of the uploaded file. The cb function is called once the name has been set. It takes the req, file, and cb parameters. The file's original name is modified to replace spaces with hyphens, and the file's extension is determined from its mimetype. The final filename is a concatenation of the modified name, the current timestamp, and the file extension.
+
+* -> Finally, uploadOptions is initialized with the storage object. It can be used with an HTTP POST request to upload files to the server.
+*/
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const isValid = FILE_TYPE_MAP[file.mimetype];
+        let uploadError = new Error('invalid image type');
+
+        if (isValid) {
+            uploadError = null;
+        }
+        cb(uploadError, 'public/uploads');
+    },
+    filename: function (req, file, cb) {
+        const fileName = file.originalname.split(' ').join('-');
+        const extension = FILE_TYPE_MAP[file.mimetype];
+        cb(null, `${fileName}-${Date.now()}.${extension}`);
+    }
+});
+
+const uploadOptions = multer({ storage: storage });
 
 
 // http://localhost:3000/api/v1/products
