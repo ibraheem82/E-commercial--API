@@ -68,7 +68,7 @@ router.post('/', async (req, res) => {
 // * Login User
 // * when you logIn you will be given a access {Token}.
 router.post('/login', async (req, res) => {
-    // login with the credentials that will be provided.
+    // login with your credentials.
     const user = await User.findOne({
         email: req.body.email
     })
