@@ -6,8 +6,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer')
 
-const multer = require('multer');
-
 const FILE_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',
