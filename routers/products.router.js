@@ -100,6 +100,8 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) => {
 
   if (!category) return res.status(400).send('Invalid Category');
 
+  // basePath of the application, to get host from the request
+  const basePath = `${req.protocol}://${req.get('host')}`
   // coming from the uploaded file.
   const fileName = req.file.filename
   // receive product from the frontend
