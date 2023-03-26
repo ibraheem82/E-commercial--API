@@ -79,9 +79,10 @@ router.post('/login', async (req, res) => {
     }
 // it will compare the password that the user is useing to sign in by the user.passwordHash in the database.
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-
+            // * Will generate Json web token for the authenticated user.
         const token = jwt.sign(
             {
+                // * Will turn the information or payload into the token that is generated.
                 userId: user.id,
                 isAdmin: user.isAdmin
             },
