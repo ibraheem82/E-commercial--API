@@ -95,6 +95,7 @@ router.get(`/:id`, async (req, res) => {
 })
 
 // * Add product
+// multer is sending us the request the file.
 router.post(`/`, uploadOptions.single('image'), async (req, res) => {
   const category = await Category.findById(req.body.category)
 
@@ -107,7 +108,7 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) => {
   // receive product from the frontend
   const product = new Product({
     name: req.body.name,
-    description: req.body.image,
+    description: req.body,
     richDescription: req.body.richDescription,
     image: `${basePath}${fileName}`,
     brand: req.body.brand,
