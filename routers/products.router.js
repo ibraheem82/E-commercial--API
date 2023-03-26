@@ -43,6 +43,7 @@ const storage = multer.diskStorage({
     }
 });
 
+// * To upload files into the server
 const uploadOptions = multer({ storage: storage });
 
 
@@ -99,6 +100,8 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) => {
 
   if (!category) return res.status(400).send('Invalid Category');
 
+  // coming from the uploaded file.
+  const fileName = req.file.filename
   // receive product from the frontend
   const product = new Product({
     name: req.body.name,
