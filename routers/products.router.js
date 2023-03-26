@@ -1,7 +1,7 @@
 const { Product } = require('../models/product.model');
 const express = require('express');
 const { Category } = require('../models/category.model');
-const User = require('../models/user');
+const User = require('../models/user.model');
 // * router
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -93,7 +93,7 @@ router.get(`/:id`, async (req, res) => {
   res.send(product);
 })
 
-
+// * Add product
 router.post(`/`, async (req, res) => {
   const category = await Category.findById(req.body.category)
 
