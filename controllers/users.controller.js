@@ -2,7 +2,6 @@ const { User } = require('../models/user.model');
 const catchAsync = require('../helpers/catchAsync');
 
 
-
 exports.getAllUsers = catchAsync(async (req, res, next) => {
     // const userList = await User.find();
     // ! Excluding the -> [passwordHash] field.
