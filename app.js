@@ -20,7 +20,7 @@ const api = process.env.API_URL;
 // * Middlewares
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
-// app.use(authJwt())
+app.use(authJwt())
 app.use(errorHandler)
 
 // * Routers
