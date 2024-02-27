@@ -33,7 +33,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // * Register User
-router.post('/', async (req, res) => { 
+router.post('/register', async (req, res) => { 
         const emailExists = await User.findOne({ email: req.body.email });
         if (emailExists) {
             return res.status(400).send('User with this e-mail already exists ✉');
