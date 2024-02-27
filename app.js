@@ -10,13 +10,8 @@ const cors = require('cors');
 
 dotenv.config({ path: './.env' });
 
-const corsOptions = {
-  origin: 'https://e-commercial-api-1.onrender.com/', // Replace with the actual origin you want to allow
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-};
-
-app.use(cors(corsOptions));
+app.use(cors())
+app.options('*', cors());
 const api = process.env.API_URL;
 
 
